@@ -4,7 +4,7 @@
 *    2.8 - Activity: Your first visualization!
 */
 
-const MARGIN = {LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 100}
+const MARGIN = {LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 130}
 const WIDTH = 600 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 400 - MARGIN.TOP - MARGIN.BOTTOM
 
@@ -14,6 +14,24 @@ const svg = d3.select("#chart-area").append("svg")
 
 const g = svg.append('g')
   .attr('transform', `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
+
+// X Label
+g.append('text')
+  .attr('class', 'x axis-label')
+  .attr('x', WIDTH / 2)
+  .attr('y', HEIGHT  + 110)
+  .attr('font-size', '20px')
+  .attr('text-anchor', 'middle')
+  .text('The Worlds Tallest Buildings')
+// Y Label
+g.append('text')
+  .attr('class', 'y axis-label')
+  .attr('x', -(HEIGHT / 2))
+  .attr('y', -60)
+  .attr('font-size', '20px')
+  .attr('text-anchor', 'middle')
+  .attr('transform', 'rotate(-90)')
+  .text('Height (m)')
 
 d3.json("data/buildings.json").then(data => {
   data.forEach(d => {
@@ -30,6 +48,24 @@ d3.json("data/buildings.json").then(data => {
   const y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.height)])
     .range([0, HEIGHT])
+
+  const xAxisCall = d3.axisBottom(x)
+  g.append('g')
+    .attr('class', 'x axis')
+    .attr('transform', `translate(0, ${HEIGHT})`)
+    .call(xAxisCall)
+    .selectAll('text')
+      .attr('y', 10)
+      .attr('x', -5)
+      .attr('text-anchor', 'end')
+      .attr('transform', 'rotate(-40)')
+
+  const yAxisCall = d3.axisLeft(y)
+    .ticks(3)
+    .tickFormat(d => d + 'm')
+  g.append('g')
+    .attr('class', 'y axis')
+    .call(yAxisCall)
 
   const rects = g.selectAll("rect")
     .data(data)
