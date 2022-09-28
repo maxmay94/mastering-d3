@@ -20,9 +20,11 @@ const g = svg.append('g')
 // SCALES
 const x = d3.scaleLinear()
 	.range([0, WIDTH])
+	// .base(10)
 
 const y = d3.scaleLinear()
 	.range([HEIGHT, 0])
+	// .base(4)
 
 // AXES 
 const xAxisGroup = g.append('g')
@@ -56,20 +58,19 @@ d3.json("data/data.json").then(data =>{
 		.base(10)
 
 	d3.interval(() => {
-		update(newData[year])
+		update(newData, year)
 		year < newData.length - 1 ? year++ : year -= newData.length - 1
 	}, 1000)
 
 })
 
-
 // UPDATE FUNCTION
-let update = (data) => {
-	// console.log(data)
+let update = (data, year) => {
+	console.log(data[year])
 	const t = d3.transition().duration(500)
 
-	x.domain([0, data.maxIncome])
-	y.domain([0, data.maxPop])
+	x.domain([0, data[year].maxIncome])
+	y.domain([0, data[year].maxPop])
 
 	// DRAW AXES
 	const xAxisCall = d3.axisBottom(x)
@@ -85,15 +86,13 @@ let update = (data) => {
 	yAxisGroup.transition(t).call(yAxisCall)
 
 	const points = g.selectAll('circle')
-		.attr('class', 'circle')
-		.data(data)
+		.data(data[year].countries)
 
 	points.exit()
 		.attr('fill', 'red')
 		.transition(t)
 			.attr('cy', y(0))
 		.remove()
-
 
 	points.enter().append('circle')
 		.attr('cy', y(0))
