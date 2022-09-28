@@ -30,7 +30,7 @@ const y = d3.scaleLinear()
 const area = d3.scaleLinear()
 	.range([25*Math.PI, 1500*Math.PI])
 	.domain([2000, 1400000000])
-const continentColor = d3.scaleOrdinal(d3.schemePastel1)
+const continentColor = d3.scaleOrdinal(d3.schemeTableau10)
 
 // AXES 
 const xAxisGroup = g.append('g')
@@ -44,7 +44,7 @@ const yAxisGroup = g.append('g')
 const yearLabel = g.append('text')
 	.attr('class', 'year label')
 	.attr('font-size', 20)
-	.attr('x', WIDTH  - (WIDTH / 20))
+	.attr('x', WIDTH  - (WIDTH / 30))
 	.attr('y', HEIGHT - 5)
 	.attr('text-anchor', 'middle')
 
@@ -65,41 +65,37 @@ const yLabel = g.append("text")
   .attr("font-size", "20px")
   .attr("text-anchor", "middle")
   .attr("transform", "rotate(-90)")
-	.text('Life Expectancy')
+	.text('Life Expectancy (Years)')
 
 // READ DATA
 d3.json("data/data.json").then(data =>{
 
 	let newData = data.map(d => {
-		let maxPop = 0
-		let maxLifeExp = 0
-		let maxIncome = 0
-		d.countries.forEach(c => {
-			if(c.life_exp > maxLifeExp) maxLifeExp = c.life_exp
-			if(c.population > maxPop) maxPop = c.population
-			if(c.income > maxIncome) maxIncome = c.income
-		})
-		d.maxPop = maxPop
-		d.maxLifeExp = maxLifeExp
-		d.maxIncome = maxIncome
+		// let maxPop = 0
+		// let maxLifeExp = 0
+		// let maxIncome = 0
+		// d.countries.forEach(c => {
+		// 	if(c.life_exp > maxLifeExp) maxLifeExp = c.life_exp
+		// 	if(c.population > maxPop) maxPop = c.population
+		// 	if(c.income > maxIncome) maxIncome = c.income
+		// })
+		// d.maxPop = maxPop
+		// d.maxLifeExp = maxLifeExp
+		// d.maxIncome = maxIncome
 		d.year = Number(d.year)
 		return d
 	})
 
 	d3.interval(() => {
 		update(newData[year])
-		year < newData.length - 1 ? year++ : year - newData.length - 1
+		year < newData.length - 1 ? year++ : year -= (newData.length - 1)
 	}, 100)
 
 })
 
 // UPDATE FUNCTION
 let update = (data) => {
-	console.log(data)
-	const t = d3.transition().duration(50)
-
-	// x.domain([0, data.maxIncome])
-	// y.domain([0, data.maxLifeExp])
+	const t = d3.transition().duration(75)
 
 	// DRAW AXES
 	const xAxisCall = d3.axisBottom(x)
