@@ -63,7 +63,7 @@ d3.csv("data/revenues.csv").then(data => {
     update(newData)
   }, 2000)
 
-  update(data)
+  // update(data)
 })
 
 function update(data) {
@@ -99,14 +99,14 @@ function update(data) {
 
   // ENTER new elements present in data.
   rects.enter().append("circle")
-  .attr('cy', y(0))
-  .attr("fill", "green")
-  .attr('r', 5)
+    .attr('cy', y(0))
+    .attr("fill", "green")
+    .attr('r', 5)
   // UPDATE old elements present in data.
-  .merge(rects)
-  .transition(t)
-    .attr("cx", (d) => x(d.month) + (x.bandwidth() / 2))
-    .attr("cy", d => y(d[value]))
+    .merge(rects)
+    .transition(t)
+      .attr("cx", (d) => x(d.month) + (x.bandwidth() / 2))
+      .attr("cy", d => y(d[value]))
 
 
   const text = flag ? 'Profit ($)' : 'Revenue ($)'
