@@ -20,7 +20,7 @@ const g = svg.append('g')
 // SCALES
 const x = d3.scaleLinear()
 	.range([0, WIDTH])
-	// .base(10)
+	// .base(100)
 
 const y = d3.scaleLinear()
 	.range([HEIGHT, 0])
@@ -53,24 +53,20 @@ d3.json("data/data.json").then(data =>{
 		return d
 	})
 
-	const x = d3.scaleLog()
-		.domain([0, 1390110388])
-		.base(10)
-
 	d3.interval(() => {
-		update(newData, year)
+		update(newData[year])
 		year < newData.length - 1 ? year++ : year -= newData.length - 1
 	}, 1000)
 
 })
 
 // UPDATE FUNCTION
-let update = (data, year) => {
-	console.log(data[year])
+let update = (data) => {
+	// console.log(data)
 	const t = d3.transition().duration(500)
 
-	x.domain([0, data[year].maxIncome])
-	y.domain([0, data[year].maxPop])
+	x.domain([0, data.maxIncome])
+	y.domain([0, data.maxLifeExp])
 
 	// DRAW AXES
 	const xAxisCall = d3.axisBottom(x)
@@ -86,7 +82,7 @@ let update = (data, year) => {
 	yAxisGroup.transition(t).call(yAxisCall)
 
 	const points = g.selectAll('circle')
-		.data(data[year].countries)
+		.data(data.countries)
 
 	points.exit()
 		.attr('fill', 'red')
@@ -95,13 +91,13 @@ let update = (data, year) => {
 		.remove()
 
 	points.enter().append('circle')
-		.attr('cy', y(0))
 		.attr('fill', 'green')
-		.attr('r', 5)
+		.attr('opacity', 0.3)
+		.attr('r', d => Math.log(d.population))
 		.merge(points)
 		.transition(t)
 			.attr('cx', (d) => x(d.income))
-			.attr('cy', (d) => y(d.population))
+			.attr('cy', (d) => y(d.life_exp))
 
 	const text = data.year
 }
