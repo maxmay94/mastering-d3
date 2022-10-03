@@ -91,7 +91,6 @@ continents.forEach((continent, i) => {
 d3.json("data/data.json").then(data =>{
 
 	let newData = data.map(d => {
-
 		d.year = Number(d.year)
 		return d
 	})
