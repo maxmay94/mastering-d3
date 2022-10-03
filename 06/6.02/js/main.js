@@ -17,6 +17,19 @@ const g = svg.append("g")
 
 let time = 0
 
+// Tooltip
+const tip = d3.tip()
+	.attr('class', 'd3-tip')
+	.html(d => {
+		let text = `<strong>Country:</strong> <span style='color:red;text-transform:capitalize'>${d.country}</span><br>`
+		text += `<strong>Continent:</strong> <span style='color:red;text-transform:capitalize'>${d.continent}</span><br>`
+		text += `<strong>Life Expectancy:</strong> <span style='color:red'>${d3.format('.2f')(d.life_exp)}</span><br>`
+		text += `<strong>GDP Per Capita:</strong> <span style='color:red'>${d3.format('$,.0f')(d.income)}</span><br>`
+		text += `<strong>Population:</strong> <span style='color:red'>${d3.format(',.0f')(d.population)}</span><br>`
+		return text
+	})
+g.call(tip)
+
 // Scales
 const x = d3.scaleLog()
 	.base(10)
@@ -128,6 +141,8 @@ function update(data) {
 	// ENTER new elements present in new data.
 	circles.enter().append("circle")
 		.attr("fill", d => continentColor(d.continent))
+		.on('mouseover', tip.show)
+		.on('mouseout', tip.hide)
 		.merge(circles)
 		.transition(t)
 			.attr("cy", d => y(d.life_exp))
