@@ -45,20 +45,34 @@ yAxis.append("text")
 	.attr("dy", ".71em")
 	.style("text-anchor", "end")
 	.attr("fill", "#5D6971")
-	.text("Population)")
+	.text("Population")
+
+// x-axis label
+yAxis.append("text")
+	.attr("class", "axis-title")
+	.attr('transform', `translate(${WIDTH / 2}, ${HEIGHT + 50})`)
+	.style("text-anchor", "middle")
+	.attr("fill", "#5D6971")
+	.attr('font-size', '20px')
+	.text("Date")
 
 // line path generator
 const line = d3.line()
 	.x(d => x(d.year))
 	.y(d => y(d.value))
 
-d3.json("data/example.json").then(data => {
+d3.json("data/coins.json").then(data => {
 	// clean data
-	data.forEach(d => {
-		d.year = parseTime(d.year)
-		d.value = Number(d.value)
-	})
-
+	let hr_vol = '24h_vol'
+	for(const coin in data) {
+		data[coin].forEach(d => {
+			d[hr_vol] = Number(d[hr_vol])
+			// d.date = Date(d.date)
+			d.market_cap = Number(d.market_cap)
+			d.price_usd = Number(d.price_usd)
+			console.log(coin, d)
+		})
+	}
 	// set scale domains
 	x.domain(d3.extent(data, d => d.year))
 	y.domain([
@@ -122,4 +136,14 @@ d3.json("data/example.json").then(data => {
 	}
 	
 	/******************************** Tooltip Code ********************************/
+})
+
+$("#date-slider").slider({
+	min: 2005,
+	max: 2015,
+	values: [2005, 2015],
+	step: 1,
+	slide: (event, ui) => {
+		// update(formattedData[time])
+	}
 })
