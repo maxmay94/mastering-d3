@@ -91,6 +91,7 @@ continents.forEach((continent, i) => {
 d3.json("data/data.json").then(data =>{
 
 	let newData = data.map(d => {
+
 		d.year = Number(d.year)
 		return d
 	})
@@ -129,7 +130,7 @@ let update = (data) => {
 		.attr('fill', d => continentColor(d.continent))
 		.merge(points)
 		.transition(t)
-			.attr('cx', (d) => x(d.income))
+			.attr('cx', (d) => x(d.income) || 0)
 			.attr('cy', (d) => y(d.life_exp))
 			.attr('r', d => (Math.sqrt(area(d.population)) / Math.PI))
 
