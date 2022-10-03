@@ -8,6 +8,8 @@ const MARGIN = { LEFT: 20, RIGHT: 100, TOP: 50, BOTTOM: 100 }
 const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 
+let newData = new Map()
+
 const svg = d3.select("#chart-area").append("svg")
   .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
   .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
@@ -63,15 +65,15 @@ const line = d3.line()
 
 d3.json("data/coins.json").then(data => {
 	// clean data
-	let hr_vol = '24h_vol'
 	for(const coin in data) {
-		data[coin].forEach(d => {
-			d[hr_vol] = Number(d[hr_vol])
+		newData.set(coin, data[coin].map(d => {
+			d['24h_vol'] = Number(d['24h_vol'])
 			// d.date = Date(d.date)
 			d.market_cap = Number(d.market_cap)
 			d.price_usd = Number(d.price_usd)
-			console.log(coin, d)
-		})
+			return d
+			// console.log(d)
+		}))
 	}
 	// set scale domains
 	x.domain(d3.extent(data, d => d.year))
