@@ -67,21 +67,30 @@ const yLabel = g.append("text")
   .attr("transform", "rotate(-90)")
 	.text('Life Expectancy (Years)')
 
+const legend = g.append('g')
+	.attr('transform', `translate(${WIDTH - 10}, ${HEIGHT - 100})`)
+
+continents.forEach((continent, i) => {
+	const legendRow = legend.append('g')
+		.attr('transform', `translate(0, ${i * 20})`)
+
+	legendRow.append('rect')
+		.attr('width', 10)
+		.attr('height', 10)
+		.attr('fill', continentColor(continent))
+
+	legendRow.append('text')
+		.attr('x', -10)
+		.attr('y', 10)
+		.attr('text-anchor', 'end')
+		.style('text-transform', 'capitalize')
+		.text(continent)
+})
+
 // READ DATA
 d3.json("data/data.json").then(data =>{
 
 	let newData = data.map(d => {
-		// let maxPop = 0
-		// let maxLifeExp = 0
-		// let maxIncome = 0
-		// d.countries.forEach(c => {
-		// 	if(c.life_exp > maxLifeExp) maxLifeExp = c.life_exp
-		// 	if(c.population > maxPop) maxPop = c.population
-		// 	if(c.income > maxIncome) maxIncome = c.income
-		// })
-		// d.maxPop = maxPop
-		// d.maxLifeExp = maxLifeExp
-		// d.maxIncome = maxIncome
 		d.year = Number(d.year)
 		return d
 	})
