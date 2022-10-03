@@ -144,6 +144,16 @@ $('#continent-select')
 		update(formattedData[time])
 	})
 
+$('#date-slider').slider({
+	min: 1800,
+	max: 2014,
+	step: 1,
+	slide: (event, ui) => {
+		time = ui.value - 1800
+		update(formattedData[time])
+	}
+})
+
 function step() {
 	// at the end of our data, loop back
 	time = (time < 214) ? time + 1 : 0
@@ -183,4 +193,7 @@ function update(data) {
 
 	// update the time label
 	timeLabel.text(String(time + 1800))
+
+	$('#year')[0].innerHTML = String(time + 1800)
+	$('#date-slider').slider('value', Number(time + 1800))
 }
