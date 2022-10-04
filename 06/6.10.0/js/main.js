@@ -9,6 +9,7 @@ const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 
 let newData = new Map()
+let curr_coin = 'bitcoin'
 
 const svg = d3.select("#chart-area").append("svg")
   .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
@@ -71,12 +72,17 @@ d3.json("data/coins.json").then(data => {
 			// d.date = Date(d.date)
 			d.market_cap = Number(d.market_cap)
 			d.price_usd = Number(d.price_usd)
-			return d
-			// console.log(d)
+			if(d.market_cap > 0 && d.price_usd > 0) return d
 		}))
 	}
+	console.log(newData)
+})
+
+
+function update(data) {
 	// set scale domains
-	x.domain(d3.extent(data, d => d.year))
+	console.log(curr_coin, data)
+	x.domain(d3.extent(newData, d => d.date))
 	y.domain([
 		d3.min(data, d => d.value) / 1.005, 
 		d3.max(data, d => d.value) * 1.005
@@ -95,7 +101,6 @@ d3.json("data/coins.json").then(data => {
 		.attr("d", line(data))
 
 	/******************************** Tooltip Code ********************************/
-
 	const focus = g.append("g")
 		.attr("class", "focus")
 		.style("display", "none")
@@ -138,7 +143,14 @@ d3.json("data/coins.json").then(data => {
 	}
 	
 	/******************************** Tooltip Code ********************************/
-})
+}
+
+$("#coin-select")
+	.on('change', () => {
+		curr_coin = $('#coin-select').val()
+		// console.log(curr_coin, newData.get(curr_coin))
+		update(newData.get(curr_coin))
+	})
 
 $("#date-slider").slider({
 	min: 2005,
