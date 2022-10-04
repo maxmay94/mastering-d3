@@ -10,6 +10,7 @@ const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 
 let newData = new Map()
 let curr_coin = 'bitcoin'
+let y_selector = 'price_usd'
 
 const svg = d3.select("#chart-area").append("svg")
   .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
@@ -66,26 +67,32 @@ const line = d3.line()
 
 d3.json("data/coins.json").then(data => {
 	// clean data
+	let parseTime = d3.timeParse('%d/%m/%Y')
 	for(const coin in data) {
 		newData.set(coin, data[coin].filter(d => {
 			const dataExists = (d.market_cap > 0 && d.price_usd > 0)
 			d['24h_vol'] = Number(d['24h_vol'])
+			d.date = parseTime(d.date)
 			d.market_cap = Number(d.market_cap)
 			d.price_usd = Number(d.price_usd)
 			return dataExists
 		}))
 	}
-	console.log(newData.get('ripple'))
+	console.log(newData.get(curr_coin)[100])
+	update(newData.get(curr_coin))
 })
 
 
 function update(data) {
+	let endDate = Object.keys(data).length - 1
 	// set scale domains
-	console.log(curr_coin, data)
-	x.domain(d3.extent(newData, d => d.date))
+	x.domain([
+		Date(data[0]['date']),
+		Date(data[endDate]['date'])
+	])
 	y.domain([
-		d3.min(data, d => d.value) / 1.005, 
-		d3.max(data, d => d.value) * 1.005
+		d3.min(data, d => d[y_selector]) / 1.005, 
+		d3.max(data, d => d[y_selector]) * 1.005
 	])
 
 	// generate axes once scales have been set
@@ -141,16 +148,20 @@ function update(data) {
 		focus.select(".x-hover-line").attr("y2", HEIGHT - y(d.value))
 		focus.select(".y-hover-line").attr("x2", -x(d.year))
 	}
-	
 	/******************************** Tooltip Code ********************************/
 }
 
-$("#coin-select")
-	.on('change', () => {
+$("#coin-select").on('change', () => {
 		curr_coin = $('#coin-select').val()
 		// console.log(curr_coin, newData.get(curr_coin))
 		update(newData.get(curr_coin))
-	})
+})
+
+$("#val-select").on('change', () => {
+		y_selector = $('#val-select').val()
+		// console.log(curr_coin, newData.get(curr_coin))
+		update(newData.get(curr_coin))
+})
 
 $("#date-slider").slider({
 	min: 2005,
@@ -158,6 +169,6 @@ $("#date-slider").slider({
 	values: [2005, 2015],
 	step: 1,
 	slide: (event, ui) => {
-		// update(formattedData[time])
+		update(newData.get(curr_coin))
 	}
 })
