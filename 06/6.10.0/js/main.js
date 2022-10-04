@@ -78,17 +78,15 @@ d3.json("data/coins.json").then(data => {
 			return dataExists
 		}))
 	}
-	console.log(newData.get(curr_coin)[100])
 	update(newData.get(curr_coin))
 })
 
 
 function update(data) {
-	let endDate = Object.keys(data).length - 1
 	// set scale domains
 	x.domain([
-		Date(data[0]['date']),
-		Date(data[endDate]['date'])
+		(data[0]['date']),
+		(data[Object.keys(data).length - 1]['date'])
 	])
 	y.domain([
 		d3.min(data, d => d[y_selector]) / 1.005, 
@@ -153,13 +151,11 @@ function update(data) {
 
 $("#coin-select").on('change', () => {
 		curr_coin = $('#coin-select').val()
-		// console.log(curr_coin, newData.get(curr_coin))
 		update(newData.get(curr_coin))
 })
 
-$("#val-select").on('change', () => {
-		y_selector = $('#val-select').val()
-		// console.log(curr_coin, newData.get(curr_coin))
+$("#var-select").on('change', () => {
+		y_selector = $('#var-select').val()
 		update(newData.get(curr_coin))
 })
 
