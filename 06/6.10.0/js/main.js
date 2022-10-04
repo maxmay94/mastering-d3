@@ -67,15 +67,15 @@ const line = d3.line()
 d3.json("data/coins.json").then(data => {
 	// clean data
 	for(const coin in data) {
-		newData.set(coin, data[coin].map(d => {
+		newData.set(coin, data[coin].filter(d => {
+			const dataExists = (d.market_cap > 0 && d.price_usd > 0)
 			d['24h_vol'] = Number(d['24h_vol'])
-			// d.date = Date(d.date)
 			d.market_cap = Number(d.market_cap)
 			d.price_usd = Number(d.price_usd)
-			if(d.market_cap > 0 && d.price_usd > 0) return d
+			return dataExists
 		}))
 	}
-	console.log(newData)
+	console.log(newData.get('ripple'))
 })
 
 
