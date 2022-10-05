@@ -17,7 +17,7 @@ const g = svg.append("g")
 
 // time parsers/formatters
 const parseTime = d3.timeParse("%d/%m/%Y")
-const formatTime = d3.timeFormat("%d/%m/%Y")
+const formatTime = d3.timeFormat("%m/%d/%Y")
 // for tooltip
 const bisectDate = d3.bisector(d => d.date).left
 
@@ -87,8 +87,7 @@ d3.json("data/coins.json").then(data => {
 	// prepare and clean data
 	filteredData = {}
 	Object.keys(data).forEach(coin => {
-		filteredData[coin] = data[coin]
-			.filter(d => {
+		filteredData[coin] = data[coin].filter(d => {
 				return !(d["price_usd"] == null)
 			}).map(d => {
 				d["price_usd"] = Number(d["price_usd"])
@@ -98,8 +97,6 @@ d3.json("data/coins.json").then(data => {
 				return d
 			})
 	})
-
-	// run the visualization for the first time
 	update()
 })
 
@@ -110,6 +107,7 @@ function update() {
 	const coin = $("#coin-select").val()
 	const yValue = $("#var-select").val()
 	const sliderValues = $("#date-slider").slider("values")
+	// filter data shown by slider adjustment
 	const dataTimeFiltered = filteredData[coin].filter(d => {
 		return ((d.date >= sliderValues[0]) && (d.date <= sliderValues[1]))
 	})
